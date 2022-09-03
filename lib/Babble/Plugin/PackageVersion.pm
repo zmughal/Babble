@@ -36,7 +36,8 @@ sub transform_to_plain {
       local $Data::Dumper::Indent = 0;
       Dumper($version->text);
     };
-    my $version_statement = q{our $VERSION = }.$version_info.';';
+    # not using line with $VERSION to avoid inaccurate VERSION detection
+    my $version_statement = qq{our \044VERSION = }.$version_info.';';
     $version->replace_text('');
 
     if( $rest->text =~ /\A\{/ ) {
