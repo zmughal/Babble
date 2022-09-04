@@ -57,7 +57,7 @@ sub transform_to_plain {
         '(?&PerlOWS) :? (?&PerlOWS)
          (?&PerlIdentifier)
          (?: (?= \( ) (?&PPR_X_quotelike_body) )?+'
-      )->replace_rule(Attributes => 
+      )->replace_rule(Attributes =>
         '(?=(?&PerlOWS):)(?&PerlAttribute)
          (?&PerlAttribute)*'
       );
@@ -135,3 +135,25 @@ sub _transform_signatures {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+Babble::Plugin::CoreSignatures - Plugin for signatures feature
+
+=head1 SYNOPSIS
+
+Supports converting from signatures syntax to plain C<@_> unpacking, for
+example from
+
+    sub foo :prototype($) ($sig) { }
+
+to
+
+    sub foo ($) { my ($sig) = @_; }
+
+=head1 SEE ALSO
+
+L<signatures feature|feature/"The 'signatures' feature">
+
+=cut

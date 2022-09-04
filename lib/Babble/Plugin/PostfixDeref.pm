@@ -169,3 +169,24 @@ sub transform_to_plain {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+Babble::Plugin::PostfixDeref - Plugin for postfix dereferencing
+
+=head1 SYNOPSIS
+
+Converts usage of the postderef syntax from
+
+    $foo->@*
+
+to
+
+    @{$foo}
+
+=head1 SEE ALSO
+
+L<postderef feature|feature/"The 'postderef' and 'postderef_qq' features">
+
+=cut

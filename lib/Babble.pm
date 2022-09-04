@@ -37,7 +37,7 @@ to have it rewrite your code on the fly, or
 to rewrite for shipping.
 
 Current core plugins are C<::CoreSignatures>, C<::State>, C<::DefinedOr>,
-C<::PostfixDeref>, C<::SubstituteAndReturn> (s//r), and C<::SKT> (which
+C<::PostfixDeref>, C<::SubstituteAndReturn> (C<s///r>), and C<::SKT> (which
 is a start on rewriting L<Syntax::Keyword::Try>). For an example of an
 external plugin, see L<Method::Signatures::PP>.
 

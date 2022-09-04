@@ -46,3 +46,24 @@ sub transform_to_plain {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+Babble::Plugin::DefinedOr - Plugin for defined-or (//) syntax
+
+=head1 SYNOPSIS
+
+Converts usage of the defined-or syntax from
+
+    $foo // $bar
+
+to
+
+    (map +(defined($_) ? $_ : $bar), $foo)[0]
+
+=head1 SEE ALSO
+
+L<E<sol>E<sol> syntax|Syntax::Construct/"//">
+
+=cut

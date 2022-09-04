@@ -139,3 +139,19 @@ sub transform_to_plain {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+Babble::Plugin::SubstituteAndReturn - Plugin for /r flag for substitution and transliteration
+
+=head1 SYNOPSIS
+
+Converts usage of the C<s///r> and C<tr///r> syntax to substitution and
+transliteration without the C</r> flag.
+
+=head1 SEE ALSO
+
+L<E<sol>r flag|Syntax::Construct/"/r">
+
+=cut
