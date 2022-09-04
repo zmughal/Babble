@@ -37,9 +37,10 @@ to have it rewrite your code on the fly, or
 to rewrite for shipping.
 
 Current core plugins are C<::CoreSignatures>, C<::State>, C<::DefinedOr>,
-C<::PostfixDeref>, C<::SubstituteAndReturn> (C<s///r>), and C<::SKT> (which
-is a start on rewriting L<Syntax::Keyword::Try>). For an example of an
-external plugin, see L<Method::Signatures::PP>.
+C<::PostfixDeref>, C<::SubstituteAndReturn> (C<s///r>), C<::Ellipsis>,
+C<::PackageBlock>, C<::PackageVersion>, and C<::SKT> (which is a start on
+rewriting L<Syntax::Keyword::Try>).  For an example of an external plugin,
+see L<Method::Signatures::PP>.
 
 Not for 'normal' use but still interesting, C<::Sigify> attempts to convert
 simple @_ unrolls into signatures - best used on its own, followed by
