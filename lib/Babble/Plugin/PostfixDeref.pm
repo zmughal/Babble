@@ -95,7 +95,6 @@ sub transform_to_plain {
     $top->remove_use_argument(experimental => $argument);
     $top->remove_use_argument(feature => $argument);
   }
-  # TODO: cry about lvalues assignment to postfix derefs
   my $tf = sub {
     my ($m, $in_quotelike) = @_;
     my $interpolate = defined $in_quotelike && $in_quotelike;

@@ -26,6 +26,12 @@ my @cand = (
     'my %val = %{$foo}[@idx];' ],
   [ 'my %val = $foo->%{qw(key names)};',
     'my %val = %{$foo}{qw(key names)};' ],
+
+  [ '$foo->@* = qw(a b c);',
+    '@{$foo} = qw(a b c);' ],
+  [ 'push $foo->@*, "another one";',
+    'push @{$foo}, "another one";' ],
+
   [ 'qq{ $foo->@* }',
     'qq{ @{[ @{$foo} ]} }' ],
   [ 'qq{ $foo->@{qw(key names)} }',
