@@ -1,5 +1,8 @@
 Revision history for Babble
 
+          - Squash regex compilation warning that appears on perl >= v5.30.0,
+            PPR >= 0.001000, <= 0.001005. See RT#144248.
+
 0.090007_01
           - Fix bug where positions transformed are not unique (GH#6). Fixes bug
             reported by Mark Fowler (2shortplanks++) at GH#1.
