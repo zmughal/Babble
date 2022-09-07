@@ -94,8 +94,8 @@ sub match_positions_of {
     @F;
   };
   return map { [ split ',', $_ ] }
-	  List::Util::uniqstr
-	  map { join ",", @$_ } @found;
+          List::Util::uniqstr
+          map { join ",", @$_ } @found;
 }
 
 sub each_match_of {
