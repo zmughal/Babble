@@ -2,7 +2,7 @@ package Babble;
 
 use strictures 2;
 
-our $VERSION = '0.090007_01';
+our $VERSION = '0.090007_02';
 
 1;
 
