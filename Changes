@@ -1,5 +1,9 @@
 Revision history for Babble
 
+          - Add minimum dependency on PPR 0.001006 which fixes RT#144248.
+            Revert the squashed regex compilation warning from
+            Babble 0.090007_02.
+
 0.090007_02
           - Squash regex compilation warning that appears on perl >= v5.30.0,
             PPR >= 0.001000, <= 0.001005. See RT#144248.

@@ -32,20 +32,9 @@ lazy grammar_regexp => sub {
   return $base_re unless @parts;
   my $define_block = join "\n", '(?(DEFINE)', '', @parts, '', ')';
   use re 'eval';
-  # For reasons I don't understand, this stringify is required (RT #126285).
-  # This is fixed in Perl v5.30.0+, but needed for older Perls.
+  # This stringify is required for Perl v5.18 - v5.28
+  # (RT #126285, RT #144248).
   my $final_re = "${define_block} ${base_re}";
-
-  # PPR-0.001005 requires squashing this warning for Perl v5.30.0+.
-  # See <https://rt.cpan.org/Ticket/Display.html?id=144248>.
-  # Make regexp warnings non-fatal here.
-  no warnings qw(regexp);
-  use warnings NONFATAL => qw(regexp);
-  local $SIG{__WARN__} = sub {
-    return if $_[0] =~ /matches null string many times in regex/;
-    die $_[0];
-  };
-
   return qr{$final_re}x;
 };
 
