@@ -1,5 +1,8 @@
 Revision history for Babble
 
+0.090008
+          - No change from 0.090007_03.
+
 0.090007_03
           - Add minimum dependency on PPR 0.001006 which fixes RT#144248.
             Revert the squashed regex compilation warning from
