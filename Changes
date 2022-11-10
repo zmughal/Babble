@@ -1,5 +1,6 @@
 Revision history for Babble
 
+          - Performance improvement: cache generated grammar regexps.
 0.090008
           - No change from 0.090007_03.
 

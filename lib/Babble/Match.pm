@@ -27,6 +27,7 @@ lazy top_re => sub {
   return "\\A${top}\\Z";
 };
 
+my %SUBMATCHES_COMPILE_CACHE;
 lazy submatches => sub {
   my ($self) = @_;
   return {} unless ref(my $top = $self->top_rule);
@@ -41,7 +42,8 @@ lazy submatches => sub {
       : $_
   } @$top;
   return {} unless @subrules;
-  my @values = $self->text =~ /\A${re}\Z ${\$self->grammar_regexp}/x;
+  my $submatch_re = qq[ \\A${re}\\Z ${\$self->grammar_regexp} ];
+  my @values = $self->text =~ ($SUBMATCHES_COMPILE_CACHE{$submatch_re} ||= qr/$submatch_re/x);
   die "Match failed" unless @values;
   my %submatches;
   require Babble::SubMatch;
