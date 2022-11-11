@@ -88,46 +88,36 @@ sub _transform_binary {
 sub _transform_contextualise {
   my ($self, $top) = @_;
 
-  my $contextual_subst = 0;
   do {
     my %subst_pos;
     # Look for substitution without binding operator:
     # First look for an expression that begins with Substitution.
-    $top->each_match_within(Expression => [
-      [ subst => '(?>
-                      (?&PerlSubstitution)
-                    | (?&PerlTransliteration)
-                  )' ],
-    ] => sub {
+    $top->each_match_of( Expression => sub {
       my ($m) = @_;
-      my ($subst) = @{$m->submatches}{qw(subst)};
-      my ($flags) = $subst->text =~ _get_flags($subst->text);
+      my @s_pos = $m->match_positions_of('QuotelikeS');
+      my @t_pos = $m->match_positions_of('QuotelikeTR');
+      my @start_pos =
+          @s_pos && $s_pos[0][0] == 0
+        ? @{ $s_pos[0] }
+        : @t_pos && $t_pos[0][0] == 0
+        ? @{ $t_pos[0] }
+        : ();
+      return unless @start_pos;
+      my $text = substr($m->text, $start_pos[0], $start_pos[1]);
+      my ($flags) = $text =~ _get_flags($text);
       return unless $flags =~ /r/;
       $subst_pos{$m->start} = 1;
     });
-    # Then remove Substitution within a BinaryExpression
-    $top->each_match_within(BinaryExpression => [
-       [ 'left' => '(?>(?&PerlPrefixPostfixTerm))' ],
-       '(?>(?&PerlOWS)) =~ (?>(?&PerlOWS))',
-       [ 'right' => '(?>
-                         (?&PerlSubstitution)
-                       | (?&PerlTransliteration)
-                     )' ],
-    ] => sub {
-      my ($m) = @_;
-      delete $subst_pos{ $m->start + $m->submatches->{right}->start };
-    });
 
     # Insert context variable and binding operator
-    my @subst_pos = sort keys %subst_pos;
-    $contextual_subst = @subst_pos;
+    my @subst_pos = sort { $a <=> $b } keys %subst_pos;
     my $diff = 0;
     my $replace = '$_ =~ ';
     while( my $pos = shift @subst_pos ) {
       $top->replace_substring($pos + $diff, 0, $replace);
       $diff += length $replace;
     }
-  } while( $contextual_subst);
+  };
 }
 
 sub transform_to_plain {
