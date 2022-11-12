@@ -99,5 +99,7 @@ jobs:
           cpanm --notest --installdeps --with-develop ${{ needs.dist.outputs.dist-name  }}
 
       - name: Run tests
+        env:
+          HARNESS_TIMER: 1
         run:
           cpanm --verbose --test-only ${{ needs.dist.outputs.dist-name  }}
