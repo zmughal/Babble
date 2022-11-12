@@ -94,16 +94,21 @@ sub _transform_contextualise {
     # First look for an expression that begins with Substitution.
     $top->each_match_of( Expression => sub {
       my ($m) = @_;
-      my @s_pos = $m->match_positions_of('QuotelikeS');
-      my @t_pos = $m->match_positions_of('QuotelikeTR');
-      my @start_pos =
-          @s_pos && $s_pos[0][0] == 0
-        ? @{ $s_pos[0] }
-        : @t_pos && $t_pos[0][0] == 0
-        ? @{ $t_pos[0] }
-        : ();
-      return unless @start_pos;
-      my $text = substr($m->text, $start_pos[0], $start_pos[1]);
+      my $expr_text = $m->text;
+      my @start_pos = do {
+        if( $expr_text =~ /\A s/x ) {
+          my @s_pos = $m->match_positions_of('QuotelikeS');
+          return unless @s_pos && $s_pos[0][0] == 0;
+          @{ $s_pos[0] };
+        } elsif( $expr_text =~ /\A (?:y|tr)/x ) {
+          my @t_pos = $m->match_positions_of('QuotelikeTR');
+          return unless @t_pos && $t_pos[0][0] == 0;
+          @{ $t_pos[0] };
+        } else {
+          return;
+        }
+      };
+      my $text = substr($expr_text, $start_pos[0], $start_pos[1]);
       my ($flags) = $text =~ _get_flags($text);
       return unless $flags =~ /r/;
       $subst_pos{$m->start} = 1;
