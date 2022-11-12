@@ -1,6 +1,8 @@
 Revision history for Babble
 
-          - Performance improvement: cache generated grammar regexps.
+          - Performance improvement [general]: cache generated grammar regexps.
+          - Performance improvement [SubstituteAndReturn]: faster approach
+            to finding contextual substitution/transliteration.
 0.090008
           - No change from 0.090007_03.
 
