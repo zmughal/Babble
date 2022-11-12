@@ -62,7 +62,8 @@ jobs:
           - { os: 'ubuntu-latest', perl: "5.26" }
           - { os: 'ubuntu-latest', perl: "5.24" }
           - { os: 'ubuntu-latest', perl: "5.22" }
-          - { os: 'ubuntu-latest', perl: "5.20" }
+          ## Disabling on v5.20 due to PPR::X bug.
+          #- { os: 'ubuntu-latest', perl: "5.20" }
           - { os: 'ubuntu-latest', perl: "5.18" }
           - { os: 'ubuntu-latest', perl: "5.16" }
           - { os: 'ubuntu-latest', perl: "5.14" }
