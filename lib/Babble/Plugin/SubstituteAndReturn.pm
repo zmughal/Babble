@@ -12,6 +12,19 @@ sub _get_flags {
 
 sub _transform_binary {
   my ($self, $top) = @_;
+
+  my $chained_re = qr{
+    \G
+      (
+        (?>(?&PerlOWS)) =~ (?>(?&PerlOWS))
+        ((?>
+            (?&PerlSubstitution)
+          | (?&PerlTransliteration)
+        ))
+      )
+      @{[ $top->grammar_regexp ]}
+  }x;
+
   my $replaced;
   do {
     $replaced = 0;
@@ -38,17 +51,7 @@ sub _transform_binary {
       pos( $top_text ) = $m->start + length $m->text;
       my $chained_subs_length = 0;
       my @chained_subs;
-      while( $top_text =~ /
-        \G
-          (
-            (?>(?&PerlOWS)) =~ (?>(?&PerlOWS))
-            ((?>
-                (?&PerlSubstitution)
-              | (?&PerlTransliteration)
-            ))
-          )
-          @{[ $m->grammar_regexp ]}
-        /xg ) {
+      while( $top_text =~ /$chained_re/g ) {
         $chained_subs_length += length $1;
         push @chained_subs, $2;
       }
