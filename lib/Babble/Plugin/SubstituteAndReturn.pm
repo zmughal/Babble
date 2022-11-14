@@ -2,12 +2,35 @@ package Babble::Plugin::SubstituteAndReturn;
 
 use Moo;
 
-my $s_FLAGS_RE = qr/([msixpodualgcern]*+)$/;
-my $y_FLAGS_RE = qr/([cdsr]*+)$/;
+our ($REGMARK, $REGERROR);
+
+my %OP_TYPE_DATA = (
+  s => {
+    rule  => 'QuotelikeS',
+    flags => qr/([msixpodualgcern]*+)$/,
+  },
+  y => {
+    rule  => 'QuotelikeTR',
+    flags => qr/([cdsr]*+)$/,
+  },
+);
+
+my $OP_TYPE_RE = qr{
+  \A
+  (?:
+          s       (*MARK:s)
+    | (?: y|tr )  (*MARK:y)
+  )
+}x;
 
 sub _get_flags {
   my ($text) = @_;
-  $text =~ /^s/ ? $s_FLAGS_RE : $y_FLAGS_RE;
+
+  if ( $text =~ $OP_TYPE_RE ) {
+    return $OP_TYPE_DATA{$REGMARK}{flags};
+  }
+
+  return '';
 }
 
 sub _transform_binary {
@@ -96,14 +119,11 @@ sub _transform_contextualise {
       my ($m) = @_;
       my $expr_text = $m->text;
       my @start_pos = do {
-        if( $expr_text =~ /\A s/x ) {
-          my @s_pos = $m->match_positions_of('QuotelikeS');
-          return unless @s_pos && $s_pos[0][0] == 0;
-          @{ $s_pos[0] };
-        } elsif( $expr_text =~ /\A (?:y|tr)/x ) {
-          my @t_pos = $m->match_positions_of('QuotelikeTR');
-          return unless @t_pos && $t_pos[0][0] == 0;
-          @{ $t_pos[0] };
+        if( $expr_text =~ $OP_TYPE_RE ) {
+          my $rule = $OP_TYPE_DATA{$REGMARK}{rule};
+          my @pos = $m->match_positions_of($rule);
+          return unless @pos && $pos[0][0] == 0;
+          @{ $pos[0] };
         } else {
           return;
         }
