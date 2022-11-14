@@ -4,7 +4,6 @@ use Babble::Grammar;
 use Babble::SymbolGenerator;
 use Mu;
 use List::Util 1.45;
-use re 'eval';
 
 ro 'top_rule';
 rwp 'text';
@@ -43,7 +42,13 @@ lazy submatches => sub {
   } @$top;
   return {} unless @subrules;
   my $submatch_re = qq[ \\A${re}\\Z ${\$self->grammar_regexp} ];
-  my @values = $self->text =~ ($SUBMATCHES_COMPILE_CACHE{$submatch_re} ||= qr/$submatch_re/x);
+  my @values = $self->text =~ (
+    $SUBMATCHES_COMPILE_CACHE{$submatch_re} ||= do {
+      use re 'eval';
+      my $re = qr/$submatch_re/x;
+      no re 'eval';
+      $re;
+    });
   die "Match failed" unless @values;
   my %submatches;
   require Babble::SubMatch;

@@ -33,11 +33,15 @@ lazy grammar_regexp => sub {
   my $base_re = $self->base_grammar_regexp;
   return $base_re unless @parts;
   my $define_block = join "\n", '(?(DEFINE)', '', @parts, '', ')';
-  use re 'eval';
   # This stringify is required for Perl v5.18 - v5.28
   # (RT #126285, RT #144248).
   my $final_re = "${define_block} ${base_re}";
-  return $COMPILE_CACHE{$final_re} ||= qr{$final_re}x;
+  return $COMPILE_CACHE{$final_re} ||= do {
+    use re 'eval';
+    my $re = qr{$final_re}x;
+    no re 'eval';
+    $re;
+  }
 };
 
 sub _rule_name {
