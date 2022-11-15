@@ -88,16 +88,24 @@ sub is_valid {
   return !!$self->text =~ /${\$self->top_re} ${\$self->grammar_regexp}/x;
 }
 
+my %MP_COMPILE_CACHE;
 sub match_positions_of {
   my ($self, $of) = @_;
   our @F;
   my $wrapped = $self->grammar->clone->extend_rule(
                   $of => sub { '('.$_[0].')'.'(?{ push @Babble::Match::F, [ pos() - length($^N), length($^N) ] })' }
                 )->grammar_regexp;
+
   my @found = do {
     local @F;
     local $_ = $self->text;
-    /${\$self->top_re} ${wrapped}/x;
+    my $re_text = qq/${\$self->top_re} ${wrapped}/;
+    $_ =~ ($MP_COMPILE_CACHE{$re_text} ||= do {
+      use re 'eval';
+      my $re = qr/$re_text/x;
+      no re 'eval';
+      $re;
+    });
     @F;
   };
   return map { [ split ',', $_ ] }
