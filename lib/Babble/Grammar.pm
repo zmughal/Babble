@@ -4,6 +4,8 @@ use PPR::X;
 use Mu;
 use strictures 2;
 
+use Babble::Config;
+
 lazy base_grammar_regexp => sub { $PPR::X::GRAMMAR };
 
 lazy base_rule_names => sub {
@@ -36,12 +38,13 @@ lazy grammar_regexp => sub {
   # This stringify is required for Perl v5.18 - v5.28
   # (RT #126285, RT #144248).
   my $final_re = "${define_block} ${base_re}";
-  return $COMPILE_CACHE{$final_re} ||= do {
-    use re 'eval';
-    my $re = qr{$final_re}x;
-    no re 'eval';
-    $re;
-  }
+  return $COMPILE_CACHE{$final_re} = ( Babble::Config::CACHE_RE ? $COMPILE_CACHE{$final_re} : 0 )
+    || do {
+      use re 'eval';
+      my $re = qr{$final_re}x;
+      no re 'eval';
+      $re;
+    }
 };
 
 sub _rule_name {

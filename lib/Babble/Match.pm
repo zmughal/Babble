@@ -43,7 +43,8 @@ lazy submatches => sub {
   return {} unless @subrules;
   my $submatch_re = qq[ \\A${re}\\Z ${\$self->grammar_regexp} ];
   my @values = $self->text =~ (
-    $SUBMATCHES_COMPILE_CACHE{$submatch_re} ||= do {
+    $SUBMATCHES_COMPILE_CACHE{$submatch_re} = ( Babble::Config::CACHE_RE ? $SUBMATCHES_COMPILE_CACHE{$submatch_re} : 0 )
+    || do {
       use re 'eval';
       my $re = qr/$submatch_re/x;
       no re 'eval';
