@@ -168,6 +168,12 @@ sub transform_to_plain {
   # NOTE ArrayAccessNoSpace also needs to implemented.
 }
 
+sub check_bail_out_early {
+  my ($self, $top) = @_;
+  $top->text !~ m/postderef|postderef_qq/xs
+    && $top->text !~ m/ \s* -> \s* [\@%\$] /xs;
+}
+
 1;
 __END__
 
