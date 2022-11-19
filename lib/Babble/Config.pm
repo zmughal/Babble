@@ -11,6 +11,10 @@ use constant {
   BAIL_OUT_EARLY => exists $ENV{PERL_BABBLE_BAIL_OUT_EARLY}
     ? $ENV{PERL_BABBLE_BAIL_OUT_EARLY}
     : 1,
+
+  BAIL_OUT_LATE => exists $ENV{PERL_BABBLE_BAIL_OUT_LATE}
+    ? $ENV{PERL_BABBLE_BAIL_OUT_LATE}
+    : 1,
 };
 
 1;
