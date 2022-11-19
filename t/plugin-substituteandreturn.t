@@ -39,6 +39,32 @@ my @cand = (
       }
     }
   ],
+  [ q{
+      my $var = "hey";
+      for ($var) {
+        my $output = s/hey/there/r =~ y/a-z/A-Z/r;
+        print "$output\n";
+      }
+    }, q{
+      my $var = "hey";
+      for ($var) {
+        my $output = (map { (my $__B_001 = $_) =~ s/hey/there/; for ($__B_001) { y/a-z/A-Z/ } $__B_001 } $_)[0];
+        print "$output\n";
+      }
+    }
+  ],
+  [ q{
+      '' . $_ =~ s/hey/there/r;
+    }, q{
+      '' . (map { (my $__B_001 = $_) =~ s/hey/there/; $__B_001 } $_)[0];
+    }
+  ],
+  [ q{
+      my $output = '' . s/hey/there/r;
+    }, q{
+      my $output = '' . (map { (my $__B_001 = $_) =~ s/hey/there/; $__B_001 } $_)[0];
+    }
+  ],
 );
 
 foreach my $cand (@cand) {
