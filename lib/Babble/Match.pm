@@ -89,6 +89,7 @@ sub is_valid {
   return !!$self->text =~ /${\$self->top_re} ${\$self->grammar_regexp}/x;
 }
 
+my %MATCH_POS_COMPILE_CACHE;
 sub match_positions_of {
   my ($self, $of) = @_;
   our @F;
@@ -98,7 +99,15 @@ sub match_positions_of {
   my @found = do {
     local @F;
     local $_ = $self->text;
-    /${\$self->top_re} ${wrapped}/x;
+    my $mp_re = qq/${\$self->top_re} ${wrapped}/;
+    $_ =~ ( $MATCH_POS_COMPILE_CACHE{$mp_re} = ( Babble::Config::CACHE_RE ? $MATCH_POS_COMPILE_CACHE{$mp_re} : 0 )
+      || do {
+        use re 'eval';
+        my $re = qr/$mp_re/x;
+        no re 'eval';
+        $re;
+      }
+    );
     @F;
   };
   return map { [ split ',', $_ ] }
