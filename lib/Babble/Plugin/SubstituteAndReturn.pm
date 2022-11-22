@@ -155,6 +155,11 @@ sub transform_to_plain {
   $self->_transform_binary($top);
 }
 
+sub check_bail_out_early {
+  my ($self, $top) = @_;
+  $top->text !~ m/ \b (?: s|y|tr ) \b /xs;
+}
+
 1;
 __END__
 

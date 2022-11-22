@@ -43,7 +43,9 @@ lazy submatches => sub {
   return {} unless @subrules;
   my $submatch_re = qq[ \\A${re}\\Z ${\$self->grammar_regexp} ];
   my @values = $self->text =~ (
-    $SUBMATCHES_COMPILE_CACHE{$submatch_re} ||= do {
+    $SUBMATCHES_COMPILE_CACHE{$submatch_re} = ( Babble::Config::CACHE_RE ? $SUBMATCHES_COMPILE_CACHE{$submatch_re} : 0 )
+    || do {
+      warn "Cache miss submatches\n" if Babble::Config::CACHE_RE && Babble::Config::DEBUG_CACHE_MISS;
       use re 'eval';
       my $re = qr/$submatch_re/x;
       no re 'eval';
@@ -88,6 +90,7 @@ sub is_valid {
   return !!$self->text =~ /${\$self->top_re} ${\$self->grammar_regexp}/x;
 }
 
+my %MATCH_POS_COMPILE_CACHE;
 sub match_positions_of {
   my ($self, $of) = @_;
   our @F;
@@ -97,7 +100,16 @@ sub match_positions_of {
   my @found = do {
     local @F;
     local $_ = $self->text;
-    /${\$self->top_re} ${wrapped}/x;
+    my $mp_re = qq/${\$self->top_re} ${wrapped}/;
+    $_ =~ ( $MATCH_POS_COMPILE_CACHE{$mp_re} = ( Babble::Config::CACHE_RE ? $MATCH_POS_COMPILE_CACHE{$mp_re} : 0 )
+      || do {
+        warn "Cache miss match_positions_of(): @{[ $self->top_re ]}\n" if Babble::Config::CACHE_RE && Babble::Config::DEBUG_CACHE_MISS;
+        use re 'eval';
+        my $re = qr/$mp_re/x;
+        no re 'eval';
+        $re;
+      }
+    );
     @F;
   };
   return map { [ split ',', $_ ] }
