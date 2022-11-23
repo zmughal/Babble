@@ -1,5 +1,6 @@
 Revision history for Babble
 
+0.090009
           - Performance improvement [general]: add regex caching for
             match_positions_of().
           - Performance improvement [general]: add a mechanism for using
