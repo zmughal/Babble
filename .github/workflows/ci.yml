@@ -53,23 +53,32 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         perl: ['5']
+        # defaults
+        cache: [1]
+        early_bail_out: [1]
+        late_bail_out: [1]
         include:
-          - { os: 'ubuntu-latest', perl: "5.36" }
-          - { os: 'ubuntu-latest', perl: "5.34" }
-          - { os: 'ubuntu-latest', perl: "5.32" }
-          - { os: 'ubuntu-latest', perl: "5.30" }
-          - { os: 'ubuntu-latest', perl: "5.28" }
-          - { os: 'ubuntu-latest', perl: "5.26" }
-          - { os: 'ubuntu-latest', perl: "5.24" }
-          - { os: 'ubuntu-latest', perl: "5.22" }
+          - { os: 'ubuntu-latest', perl: "5.36" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.34" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.32" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.30" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.28" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.26" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.24" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.22" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
           ## Disabling on v5.20 due to PPR::X bug.
           #- { os: 'ubuntu-latest', perl: "5.20" }
-          - { os: 'ubuntu-latest', perl: "5.18" }
-          - { os: 'ubuntu-latest', perl: "5.16" }
-          - { os: 'ubuntu-latest', perl: "5.14" }
-          - { os: 'ubuntu-latest', perl: "5.12" }
-          - { os: 'ubuntu-latest', perl: "5.10" }
-    name: Perl ${{ matrix.perl }} on ${{ matrix.os }}
+          - { os: 'ubuntu-latest', perl: "5.18" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.16" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.14" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.12" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5.10" , cache: 1, early_bail_out: 1, late_bail_out: 1 }
+          # Toggle flags:
+          - { os: 'ubuntu-latest', perl: "5"    , cache: 0, early_bail_out: 1, late_bail_out: 1 }
+          - { os: 'ubuntu-latest', perl: "5"    , cache: 0, early_bail_out: 1, late_bail_out: 0 }
+          - { os: 'ubuntu-latest', perl: "5"    , cache: 0, early_bail_out: 0, late_bail_out: 0 }
+          - { os: 'ubuntu-latest', perl: "5"    , cache: 1, early_bail_out: 0, late_bail_out: 0 }
+    name: "Perl ${{ matrix.perl }} on ${{ matrix.os }} (cache: ${{matrix.cache}}, early_bail_out: ${{matrix.early_bail_out}}, late_bail_out: ${{matrix.late_bail_out}}"
 
     steps:
       - name: Get dist artifact
@@ -92,6 +101,7 @@ jobs:
 
       - name: Install Perl deps
         run: |
+          cpanm -nq Module::Build::Tiny
           cpanm --notest --installdeps ${{ needs.dist.outputs.dist-name  }}
 
       - name: Install develop deps
@@ -101,5 +111,11 @@ jobs:
       - name: Run tests
         env:
           HARNESS_TIMER: 1
-        run:
+          PERL_BABBLE_CACHE_RE: ${{        matrix.cache          }}
+          PERL_BABBLE_BAIL_OUT_EARLY: ${{  matrix.early_bail_out }}
+          PERL_BABBLE_BAIL_OUT_LATE: ${{   matrix.late_bail_out  }}
+        run: |
+          perl -e 'print qq|PERL_BABBLE_CACHE_RE      : $ENV{PERL_BABBLE_CACHE_RE}\n|';
+          perl -e 'print qq|PERL_BABBLE_BAIL_OUT_EARLY: $ENV{PERL_BABBLE_BAIL_OUT_EARLY}\n|';
+          perl -e 'print qq|PERL_BABBLE_BAIL_OUT_LATE : $ENV{PERL_BABBLE_BAIL_OUT_LATE}\n|';
           cpanm --verbose --test-only ${{ needs.dist.outputs.dist-name  }}
