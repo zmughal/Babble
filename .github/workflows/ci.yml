@@ -14,9 +14,9 @@ jobs:
       dist-name: ${{ steps.build-dist.outputs.dist-name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Cache ~/perl5
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: ${{ runner.os }}-dist-locallib
           path: ~/perl5
@@ -42,7 +42,7 @@ jobs:
           export DISTNAME=$(mbtiny dist --verbose | perl -alE 'print do { (my $file = $F[2]) =~ s/\.tar\.[^.]+$/.tar.gz/; $file }')
           echo "dist-name=$DISTNAME" >> $GITHUB_OUTPUT
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: ${{ steps.build-dist.outputs.dist-name }}
@@ -82,7 +82,7 @@ jobs:
 
     steps:
       - name: Get dist artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: dist
 
