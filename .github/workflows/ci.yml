@@ -106,7 +106,7 @@ jobs:
 
       - name: Install develop deps
         run: |
-          cpanm --notest --installdeps --with-develop ${{ needs.dist.outputs.dist-name  }}
+          cpanm --notest --installdeps ${{ needs.dist.outputs.dist-name  }}
 
       - name: Run tests
         env:
